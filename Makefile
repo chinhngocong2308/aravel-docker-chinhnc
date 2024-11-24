@@ -3,25 +3,25 @@ for-linux-env:
 	echo "GID=$$(id -g)" >> .env
 install:
 	@make build
-	@make up
-	docker compose exec php composer install
-	docker compose exec php cp .env.example .env
-	docker compose exec php php artisan key:generate
-	docker compose exec php php artisan storage:link
-	docker compose exec php chmod -R 777 storage bootstrap/cache
+	# @make up
+	docker compose exec app composer install
+	docker compose exec app cp .env.example .env
+	docker compose exec app php artisan key:generate
+	docker compose exec app php artisan storage:link
+	docker compose exec app chmod -R 777 storage bootstrap/cache
 	@make fresh
 create-project:
 	mkdir src
 	docker compose build
 	docker compose up -d
-	docker compose exec php composer create-project --prefer-dist laravel/laravel .
-	docker compose exec php php artisan key:generate
-	docker compose exec php php artisan storage:link
-	docker compose exec php chmod -R 777 storage bootstrap/cache
+	docker compose exec app composer create-project --prefer-dist laravel/laravel .
+	docker compose exec app php artisan key:generate
+	docker compose exec app php artisan storage:link
+	docker compose exec app chmod -R 777 storage bootstrap/cache
 	@make fresh
 
 grant-permission:
-	docker compose exec php chmod -R 777 storage bootstrap/cache
+	docker compose exec app chmod -R 777 storage bootstrap/cache
 build:
 	docker compose build
 up:
@@ -45,38 +45,38 @@ ps:
 web:
 	docker compose exec web bash
 app:
-	docker compose exec php bash
+	docker compose exec app bash
 tinker:
-	docker compose exec php php artisan tinker
+	docker compose exec app php artisan tinker
 dump:
-	docker compose exec php php artisan dump-server
+	docker compose exec app php artisan dump-server
 test:
-	docker compose exec php php artisan test
+	docker compose exec app php artisan test
 migrate:
-	docker compose exec php php artisan migrate
+	docker compose exec app php artisan migrate
 fresh:
-	docker compose exec php php artisan migrate:fresh --seed
+	docker compose exec app php artisan migrate:fresh --seed
 seed:
-	docker compose exec php php artisan db:seed
+	docker compose exec app php artisan db:seed
 dacapo:
-	docker compose exec php php artisan dacapo
+	docker compose exec app php artisan dacapo
 rollback-test:
-	docker compose exec php php artisan migrate:fresh
-	docker compose exec php php artisan migrate:refresh
+	docker compose exec app php artisan migrate:fresh
+	docker compose exec app php artisan migrate:refresh
 optimize:
-	docker compose exec php php artisan optimize
+	docker compose exec app php artisan optimize
 optimize-clear:
-	docker compose exec php php artisan optimize:clear
+	docker compose exec app php artisan optimize:clear
 cache:
-	docker compose exec php composer dump-autoload --optimize
+	docker compose exec app composer dump-autoload --optimize
 	@make optimize
-	docker compose exec php php artisan event:cache
-	docker compose exec php php artisan view:cache
+	docker compose exec app php artisan event:cache
+	docker compose exec app php artisan view:cache
 cache-clear:
-	docker compose exec php composer clear-cache
+	docker compose exec app composer clear-cache
 	@make optimize-clear
-	docker compose exec php php artisan event:clear
-	docker compose exec php php artisan view:clear
+	docker compose exec app php artisan event:clear
+	docker compose exec app php artisan view:clear
 db:
 	docker compose exec db bash
 sql:
@@ -84,11 +84,14 @@ sql:
 redis:
 	docker compose exec redis redis-cli
 ide-helper:
-	docker compose exec php php artisan clear-compiled
-	docker compose exec php php artisan ide-helper:generate
-	docker compose exec php php artisan ide-helper:meta
-	docker compose exec php php artisan ide-helper:models --write --reset
+	docker compose exec app php artisan clear-compiled
+	docker compose exec app php artisan ide-helper:generate
+	docker compose exec app php artisan ide-helper:meta
+	docker compose exec app php artisan ide-helper:models --write --reset
 pint:
-	docker compose exec php ./vendor/bin/pint --verbose
+	docker compose exec app ./vendor/bin/pint --verbose
 pint-test:
-	docker compose exec php ./vendor/bin/pint --verbose --test
+	docker compose exec app ./vendor/bin/pint --verbose --test
+
+artisan-serve:
+	docker compose exec app php artisan serve
