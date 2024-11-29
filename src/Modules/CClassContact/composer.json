@@ -1,0 +1,31 @@
+{
+    "name": "nwidart/cclasscontact",
+    "description": "",
+    "authors": [
+        {
+            "name": "Nicolas Widart",
+            "email": "n.widart@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\CClassContact\\": "",
+            "Modules\\CClassContact\\App\\": "app/",
+            "Modules\\CClassContact\\Database\\Factories\\": "database/factories/",
+            "Modules\\CClassContact\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\CClassContact\\Tests\\": "tests/"
+        }
+    }
+}

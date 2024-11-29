@@ -3,12 +3,14 @@ for-linux-env:
 	echo "GID=$$(id -g)" >> .env
 install:
 	@make build
-	# @make up
+	@make up
 	docker compose exec app composer install
 	docker compose exec app cp .env.example .env
 	docker compose exec app php artisan key:generate
 	docker compose exec app php artisan storage:link
 	docker compose exec app chmod -R 777 storage bootstrap/cache
+	docker compose exec app npm run dev
+	@make migrate
 	@make fresh
 create-project:
 	mkdir src
@@ -19,6 +21,10 @@ create-project:
 	docker compose exec app php artisan storage:link
 	docker compose exec app chmod -R 777 storage bootstrap/cache
 	@make fresh
+
+composer-update: 
+	docker compose exec app composer dump-autoload --optimize
+	docker compose exec app composer update
 
 grant-permission:
 	docker compose exec app chmod -R 777 storage bootstrap/cache
@@ -58,6 +64,9 @@ fresh:
 	docker compose exec app php artisan migrate:fresh --seed
 seed:
 	docker compose exec app php artisan db:seed
+	docker compose exec app php artisan db:seed --class=Modules\\CClassContact\\Database\\Seeders\\CClassContactDatabaseSeeder
+	docker compose exec app php artisan db:seed --class=Modules\\Company\\Database\\Seeders\\CompanyDatabaseSeeder
+	docker compose exec app php artisan db:seed --class=Modules\\Job\\Database\\Seeders\\JobDatabaseSeeder
 dacapo:
 	docker compose exec app php artisan dacapo
 rollback-test:
@@ -89,9 +98,21 @@ ide-helper:
 	docker compose exec app php artisan ide-helper:meta
 	docker compose exec app php artisan ide-helper:models --write --reset
 pint:
-	docker compose exec app ./vendor/bin/pint --verbose
+	docker compose exec app ./src/vendor/bin/pint --verbose
 pint-test:
-	docker compose exec app ./vendor/bin/pint --verbose --test
+	docker compose exec app ./src/vendor/bin/pint --verbose --test
 
 artisan-serve:
+	docker compose exec app php artisan config:clear
+	docker compose exec app php artisan cache:clear
+	docker compose exec app php artisan view:clear
+	docker compose exec app php artisan route:clear
 	docker compose exec app php artisan serve
+
+seed-logo-image:
+	mkdir -p src/storage/app/public/company/logos
+	cp -r src/public/img/logo_company/* src/storage/app/public/company/logos/
+
+mix:
+	docker compose exec app npm install
+	docker compose exec app npm run dev

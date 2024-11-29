@@ -1,0 +1,11 @@
+{
+    "name": "CClassContact",
+    "alias": "cclasscontact",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\CClassContact\\App\\Providers\\CClassContactServiceProvider"
+    ],
+    "files": []
+}
