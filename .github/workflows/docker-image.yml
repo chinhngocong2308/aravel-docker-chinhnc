@@ -1,0 +1,43 @@
+name: Setup and Run Docker Project
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+
+    - name: Set up Docker
+      uses: docker/setup-qemu-action@v2
+
+    - name: Retry Docker image pull
+      run: |
+        until docker pull nginx; do echo "Retrying..."; sleep 10; done
+    - name: Run make up
+      run: |
+        make up
+    # - name: Run make seed
+    #   run: |
+    #     make seed
+
+    - name: Run make seed-logo-image
+      run: |
+        make seed-logo-image
+    - name: List Docker containers
+      run: |
+        docker ps
+    - name: Show logs for db container if it fails
+      if: failure()
+      run: docker logs db
